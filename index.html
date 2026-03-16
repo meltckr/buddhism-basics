@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0E0905">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Buddhism Basics">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+  <link rel="manifest" href="manifest.json">
+  
+  <!-- OG Tags -->
+  <meta property="og:title" content="Buddhism Basics">
+  <meta property="og:description" content="A modern guide to Buddhist fundamentals. Seven chapters from What Even Is Buddhism? to The Tibetan View.">
+  <meta property="og:image" content="https://meltckr.github.io/buddhism-basics/og-image.png">
+  <meta property="og:type" content="website">
+  
+  <!-- Twitter Card Tags -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Buddhism Basics">
+  <meta name="twitter:description" content="A modern guide to Buddhist fundamentals. Seven chapters from What Even Is Buddhism? to The Tibetan View.">
+  <meta name="twitter:image" content="https://meltckr.github.io/buddhism-basics/og-image.png">
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Lora:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <title>Buddhism Basics</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      background-color: #0E0905;
+      color: #E8E8E8;
+      font-family: 'Lora', serif;
+      line-height: 1.8;
+      font-size: 16px;
+    }
+    
+    html, body, #root {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    const definitions = {
+      buddha: {
+        term: "Buddha",
+        pronunciation: "BOO-dah",
+        etymology: "Sanskrit · bud — 'to wake'",
+        definition: "Literally 'Awakened One.' Not a god — a human being who saw through the nature of reality completely. Think of it less like a proper name and more like a title. Like 'Doctor' or 'Coach.' Siddhartha Gautama earned it. The teaching says you can too.",
+      },
+      dharma: {
+        term: "Dharma",
+        pronunciation: "DAR-mah",
+        etymology: "Sanskrit · dhṛ — 'to hold, to sustain'",
+        definition: "The teachings of the Buddha. Also used to mean 'truth' or 'the way things actually are.' When Buddhists talk about practicing the Dharma, they mean living in alignment with those teachings — not as rules, but as orientation.",
+      },
+      dukkha: {
+        term: "Dukkha",
+        pronunciation: "DOOK-kah",
+        etymology: "Pali · du 'bad' + kha 'axle hole'",
+        definition: "Usually translated as 'suffering,' but that's too heavy. Better: unsatisfactoriness. That nagging sense something is always slightly off, even when life is good. Like a wheel with an off-center axle — it rolls, but never quite smoothly.",
+      },
+      samsara: {
+        term: "Samsara",
+        pronunciation: "sahm-SAR-ah",
+        etymology: "Sanskrit · sam 'together' + sara 'flowing'",
+        definition: "The cycle of conditioned existence. The loop of seeking, getting, losing, and seeking again. Not necessarily literal reincarnation — at minimum it describes the repetitive, driven quality of ordinary human life. The treadmill. Buddhism says there's an off switch.",
+      },
+      sangha: {
+        term: "Sangha",
+        pronunciation: "SAHNG-ah",
+        etymology: "Sanskrit · sam 'together' + han 'to come'",
+        definition: "Community. The people walking the path alongside you. Traditionally refers to ordained monastics, but in modern usage it simply means your fellow practitioners — the people who understand why you meditate at 5am and don't think it's weird.",
+      },
+      nirvana: {
+        term: "Nirvana",
+        pronunciation: "nir-VAH-nah",
+        etymology: "Sanskrit · nir 'out' + va 'to blow'",
+        definition: "Often misunderstood as some blissful afterlife. Actually: the cessation of clinging. What's left when you stop struggling against reality. Not escape, but peace. The end of the loop. The off switch.",
+      },
+      karma: {
+        term: "Karma",
+        pronunciation: "KAR-mah",
+        etymology: "Sanskrit · karm — 'action, deed'",
+        definition: "Action and consequence. Not cosmic punishment — just: what you do shapes what happens next, and shapes who you become. In the moment you act, the seed is planted. Buddhism doesn't ask if you're a good person. It asks: what seeds are you planting?",
+      },
+      bodhisattva: {
+        term: "Bodhisattva",
+        pronunciation: "boh-dee-SAT-vah",
+        etymology: "Sanskrit · bodhi 'awakening' + sattva 'being'",
+        definition: "An awakening being. In Mahayana Buddhism, one who seeks enlightenment not just for themselves, but with the intention to help all beings reach it. The Dalai Lama is considered one. So is anyone committed to waking up while helping others wake up.",
+      },
+      sunyata: {
+        term: "Śūnyatā",
+        pronunciation: "SHOO-nyah-tah",
+        etymology: "Sanskrit · śūnya — 'empty'",
+        definition: "Emptiness. Not meaningless — nothing exists in isolation. Everything is interconnected, interdependent, constantly changing. Your 'self' has no fixed, independent essence. Neither does anything else. This isn't depressing — it's liberating.",
+      },
+      anatta: {
+        term: "Anattā",
+        pronunciation: "ah-NAH-tah",
+        etymology: "Pali · an 'without' + atta 'self'",
+        definition: "No-self. The central Buddhist insight that there's no permanent, unchanging essence inside you. You're a process, not a thing. A flowing river, not a bucket. This is hard to understand intellectually, but easy to see when you watch your own mind closely.",
+      },
+      anicca: {
+        term: "Anicca",
+        pronunciation: "ah-NEECH-chah",
+        etymology: "Pali · an 'without' + icca 'permanence'",
+        definition: "Impermanence. Everything changes. Your thoughts, emotions, body, relationships, the planet. Fighting this is the root of suffering. Accepting it is wisdom. Buddhism doesn't say change is bad — it says recognizing change as fundamental changes how you live.",
+      },
+      sila: {
+        term: "Śīla",
+        pronunciation: "SHEE-lah",
+        etymology: "Sanskrit · śīla — 'conduct, morality'",
+        definition: "Ethical conduct. Not rules imposed from above, but agreements with yourself about how to live without harming. In Buddhist practice, usually the Five Precepts: avoid killing, stealing, sexual misconduct, intoxication, and false speech. Not because God says so, but because these habits undermine peace.",
+      },
+      samadhi: {
+        term: "Samādhi",
+        pronunciation: "sah-MAH-dee",
+        etymology: "Sanskrit · sam 'together' + adhi 'to bring'",
+        definition: "Concentration, meditative stability. The state where your attention stays steady on one object without being pulled away. Not rigid — like a flame in still air. In samadhi, the chatter quiets and clarity emerges.",
+      },
+      prajna: {
+        term: "Prajñā",
+        pronunciation: "PRAH-juh-nah",
+        etymology: "Sanskrit · pra 'before' + jna 'to know'",
+        definition: "Wisdom, insight, discriminating awareness. Deeper than intellect — the direct seeing of how things actually are. The intuitive knowing that arises when the mind settles. Buddhism pursues prajna like a person lost in the dark pursues light.",
+      },
+      vedana: {
+        term: "Vedanā",
+        pronunciation: "vay-DAH-nah",
+        etymology: "Sanskrit · ved — 'to feel, perceive'",
+        definition: "Sensation or feeling. In Buddhist psychology, the second of five aggregates. The raw sensory tone — pleasant, unpleasant, or neutral. Not emotion, just the basic quality of experience. Much suffering comes from resisting unpleasant vedana.",
+      },
+      sanna: {
+        term: "Saññā",
+        pronunciation: "SAHN-yah",
+        etymology: "Pali · sam 'together' + na 'to know'",
+        definition: "Perception, recognition. How the mind labels and categorizes raw sensation. The same painful moment can be perceived as 'learning' or 'injury' — the pain is the same, but the story changes everything.",
+      },
+      sankhara: {
+        term: "Saṅkhāra",
+        pronunciation: "sahng-KAH-rah",
+        etymology: "Sanskrit · sam 'together' + kara 'to make'",
+        definition: "Conditioned things, mental formations. In Buddhist psychology, the fourth aggregate — all the mental processes that construct experience: intention, habit, reaction. These are what we can actually work with in practice.",
+      },
+      vijnana: {
+        term: "Vijñāna",
+        pronunciation: "vig-NAH-nah",
+        etymology: "Sanskrit · vi 'apart' + jna 'to know'",
+        definition: "Consciousness. In Buddhist psychology, the fifth aggregate. Not a unified 'I' — six different types (sight, sound, smell, taste, touch, mind). Each one arises in dependence on its object. Impersonal. Mechanical.",
+      },
+      rupa: {
+        term: "Rūpa",
+        pronunciation: "ROO-pah",
+        etymology: "Sanskrit · rūp — 'form, appearance'",
+        definition: "Form, materiality. In Buddhist psychology, the first of five aggregates. Physical phenomena — the body and the material elements. Not separate from mind — they interact constantly.",
+      },
+      tanha: {
+        term: "Taṇhā",
+        pronunciation: "TAH-nyah",
+        etymology: "Pali · tanha — 'craving, thirst'",
+        definition: "Craving, thirst, compulsive wanting. The Second Noble Truth says this is the cause of suffering. Not desire itself, but the clinging, grasping quality — the 'I must have this' or 'I must get rid of that.'",
+      },
+      upadana: {
+        term: "Upādāna",
+        pronunciation: "oo-PAH-dah-nah",
+        etymology: "Sanskrit · upa 'near' + adana 'to take'",
+        definition: "Clinging, grasping. The next step after craving — when wanting becomes active clinging. Buddhism says liberation comes when clinging stops. Not through willpower, but through seeing clearly why clinging doesn't work.",
+      },
+      bhavana: {
+        term: "Bhāvanā",
+        pronunciation: "bah-VAH-nah",
+        etymology: "Sanskrit · bhava — 'becoming, cultivation'",
+        definition: "Mental cultivation, meditation. The systematic training of the mind. Not to escape reality, but to see it more clearly. In Buddhist practice, bhavana includes concentration (samadhi), insight (vipassana), and loving-kindness (metta).",
+      },
+      vipassana: {
+        term: "Vipassanā",
+        pronunciation: "vih-PAH-suh-nah",
+        etymology: "Pali · vi 'into' + passana 'to see'",
+        definition: "Insight, clear seeing. A meditation practice where you observe the constant change in your experience — sensations arising and passing, thoughts appearing and dissolving. Through this observation, understanding deepens naturally.",
+      },
+      metta: {
+        term: "Mettā",
+        pronunciation: "MET-tah",
+        etymology: "Pali · metta — 'loving-kindness'",
+        definition: "Loving-kindness, unconditional friendliness. A meditation practice where you systematically cultivate goodwill toward yourself and all beings. Not sentiment — action. The commitment to not harm, and where possible, to help.",
+      },
+      mudra: {
+        term: "Mudrā",
+        pronunciation: "MOO-drah",
+        etymology: "Sanskrit · mudra — 'seal, gesture'",
+        definition: "Symbolic hand gesture. In Buddhist practice and art, mudras carry meaning: hands in lap means meditation, raised hand means fearlessness, palm forward means blessing. A way to embody teaching without words.",
+      },
+      mandala: {
+        term: "Maṇḍala",
+        pronunciation: "MAHN-dah-lah",
+        etymology: "Sanskrit · manda 'essence' + la 'container'",
+        definition: "Circular diagram, often incredibly intricate. Used in meditation as a focus point, representing the cosmos or a deity's realm. Creating and contemplating a mandala is a way of training attention and understanding the nature of mind.",
+      },
+      tantra: {
+        term: "Tantra",
+        pronunciation: "TAHN-trah",
+        etymology: "Sanskrit · tan — 'to weave, spread'",
+        definition: "A complex Buddhist tradition emphasizing ritual, visualization, and the use of desire itself as a path to liberation. Often misunderstood in the West. In Tibetan Buddhism, Tantra is the fastest path, but requires expert guidance.",
+      },
+      sutra: {
+        term: "Sūtra",
+        pronunciation: "SOO-trah",
+        etymology: "Sanskrit · sū — 'thread'",
+        definition: "Teaching, discourse. Often a recorded discourse of the Buddha. In Buddhist texts, sutras are the primary source material — they're read as direct teachings. Different schools emphasize different sutras.",
+      },
+      vinaya: {
+        term: "Vinaya",
+        pronunciation: "vih-NAH-yah",
+        etymology: "Sanskrit · vi 'away' + naya 'to lead'",
+        definition: "Monastic discipline. The rules and guidelines for ordained Buddhist monks and nuns. Detailed and specific — what you wear, how you eat, how you speak. Not oppressive, but a framework for practice.",
+      },
+      bhikkhu: {
+        term: "Bhikkhu",
+        pronunciation: "BIK-koo",
+        etymology: "Pali · bhik — 'to beg'",
+        definition: "Buddhist monk. One who has taken vows and ordains into monastic life. Technically, a bhikkhu is one who lives on alms. In practice, monks receive regular meals and support from the community.",
+      },
+      bhikkhuni: {
+        term: "Bhikkhunī",
+        pronunciation: "bik-KOO-nee",
+        etymology: "Pali · bhikkhu 'monk' + ni 'feminine'",
+        definition: "Buddhist nun. A woman who has taken monastic vows. The bhikkhuni sangha is important in all Buddhist traditions, though the history is complex — some schools have maintained it, others lost it and are trying to restore it.",
+      },
+      arhat: {
+        term: "Arhat",
+        pronunciation: "AHR-hat",
+        etymology: "Sanskrit · arhat — 'worthy one'",
+        definition: "One who has reached nirvana within a single lifetime. An arhat has eliminated the three poisons (greed, hatred, delusion) and will not be reborn. In Theravada Buddhism, becoming an arhat is the goal.",
+      },
+      pratyekabuddha: {
+        term: "Pratyekabuddha",
+        pronunciation: "prah-tyay-kah-BOO-dah",
+        etymology: "Sanskrit · pratyeka 'individual' + buddha 'awakened'",
+        definition: "A solitary buddha. One who becomes enlightened through their own practice without the help of a teacher, and who doesn't teach others. Rare. Mentioned in Buddhist texts but not actively cultivated as a path.",
+      },
+      tathagata: {
+        term: "Tathāgata",
+        pronunciation: "tah-AH-gah-tah",
+        etymology: "Sanskrit · tatha 'thus' + gata 'gone'",
+        definition: "'Thus-gone one.' An epithet for the Buddha. Sometimes means one who has gone the way things actually are, who has seen through illusion. A name for someone who is awake.",
+      },
+      bodhi: {
+        term: "Bodhi",
+        pronunciation: "BOH-dee",
+        etymology: "Sanskrit · bodhi — 'awakening'",
+        definition: "Awakening, enlightenment. The Bodhi tree is where Siddhartha sat and became Buddha. 'Bodhi mind' in Mahayana is the aspiration to enlightenment for all beings.",
+      },
+      dharmadhatu: {
+        term: "Dharmadhātu",
+        pronunciation: "dhar-mah-DAH-too",
+        etymology: "Sanskrit · dharma 'truth' + dhatu 'element, realm'",
+        definition: "The realm of reality, the fundamental nature of existence. All-pervading, containing infinite buddhas and bodhisattvas. Emphasizes the interconnection of all phenomena — nothing exists in isolation.",
+      },
+      tathagatagarbha: {
+        term: "Tathāgatagarbha",
+        pronunciation: "tah-AH-gah-tah-GAR-bah",
+        etymology: "Sanskrit · tathagata 'thus-gone' + garbha 'womb'",
+        definition: "Buddha-nature, the potential for Buddhahood. A controversial concept: the idea that all beings have Buddha-nature within them, and therefore all can become Buddhas. Some see it as optimistic, others worry it suggests a fixed essence.",
+      },
+      abhidhamma: {
+        term: "Abhidhamma",
+        pronunciation: "ah-bee-DHAH-mah",
+        etymology: "Pali · abhi 'higher' + dhamma 'teaching'",
+        definition: "Higher teachings, Buddhist psychology and philosophy. A systematic analysis of experience into fundamental categories. Dense and technical — the most philosophical part of the Pali Canon.",
+      },
+      atman: {
+        term: "Ātman",
+        pronunciation: "AHT-mahn",
+        etymology: "Sanskrit · atman — 'self'",
+        definition: "The eternal self in Hinduism. The Buddha specifically rejected atman, teaching anatta instead. This was radical — other Indian traditions agreed there was a permanent, unchanging self inside you. Buddhism says there isn't.",
+      },
+      brahman: {
+        term: "Brahman",
+        pronunciation: "BRAH-mahn",
+        etymology: "Sanskrit · brahma — 'vast, infinite'",
+        definition: "The ultimate reality, God, or cosmic consciousness in Hinduism. Buddhism doesn't deny brahman — it just says realizing brahman isn't the goal. What matters is ending suffering now, not union with the absolute.",
+      },
+      maya: {
+        term: "Māyā",
+        pronunciation: "MAH-yah",
+        etymology: "Sanskrit · may — 'to make, create'",
+        definition: "In Hindu philosophy, the illusion of the material world. Buddhism uses the term differently — not that the world is illusion, but that our habitual understanding of it (as solid, permanent, independent) is illusory.",
+      },
+      puja: {
+        term: "Pūjā",
+        pronunciation: "POO-jah",
+        etymology: "Sanskrit · puja — 'offering, worship'",
+        definition: "Ritual worship or ceremony. In Buddhism, pujas aren't about appeasing gods — they're psychological practices. An altar, incense, and chanting focus the mind and express intention.",
+      },
+      asana: {
+        term: "Āsana",
+        pronunciation: "AH-suh-nuh",
+        etymology: "Sanskrit · asa — 'to sit'",
+        definition: "Posture, seat. In yoga and meditation, asanas are body positions. Buddhist practice includes right posture, usually upright sitting. Physical alignment affects mental clarity — you can't be slumped and alert at the same time.",
+      },
+      pranayama: {
+        term: "Prāṇāyāma",
+        pronunciation: "prah-nah-YAH-mah",
+        etymology: "Sanskrit · prana 'life force' + ayama 'control'",
+        definition: "Breath control. In yoga and meditation, pranayama practices regulate the breath to calm the mind. Buddhism includes mindful breathing but doesn't emphasize control as much as observation.",
+      },
+      chakra: {
+        term: "Cakra",
+        pronunciation: "CHAK-rah",
+        etymology: "Sanskrit · chakra — 'wheel'",
+        definition: "Energy centers in the body. In Tantric Buddhism, meditation focuses on moving energy through chakras, from root to crown. Not literally physical, but a map of subtle energies and corresponding psychological states.",
+      },
+      nadi: {
+        term: "Nāḍī",
+        pronunciation: "NAH-dee",
+        etymology: "Sanskrit · nadi — 'tube, channel'",
+        definition: "Energy channels in the body. In Tantric practice, kundalini (sleeping energy) moves through nadis when activated. This is advanced practice — not part of basic Buddhist training.",
+      },
+      kundalini: {
+        term: "Kuṇḍalinī",
+        pronunciation: "koon-dah-LEE-nee",
+        etymology: "Sanskrit · kundalini — 'coiled one'",
+        definition: "Dormant energy at the base of the spine. In Tantric Buddhism and yoga, spiritual practice awakens and raises kundalini, leading to profound states of consciousness and transformation. Requires careful guidance.",
+      },
+      mantra: {
+        term: "Mantra",
+        pronunciation: "MAHN-trah",
+        etymology: "Sanskrit · man 'mind' + tra 'to protect'",
+        definition: "Sacred syllable, phrase, or sound. Repeated in meditation to focus the mind and invoke particular qualities. 'Om' is the most famous, but each Buddhist tradition has mantras — 'Om Mani Padme Hum' in Tibetan Buddhism invokes compassion.",
+      },
+      dharani: {
+        term: "Dhāraṇī",
+        pronunciation: "dah-RAH-nee",
+        etymology: "Sanskrit · dharani — 'to hold, support'",
+        definition: "A long mantra or mnemonic formula. In Mahayana Buddhism, dharanis are used to protect, invoke blessings, and aid memory. Some are extremely long — essentially condensed teachings.",
+      },
+      nyaya: {
+        term: "Nyāya",
+        pronunciation: "NYAH-yah",
+        etymology: "Sanskrit · nyaya — 'rule, principle'",
+        definition: "Logic. A school of Indian philosophy that developed systematic logic. Buddhist philosophers engaged seriously with nyaya — they weren't anti-rational, but used logic to investigate truth.",
+      },
+      vaibhasika: {
+        term: "Vaibhāṣika",
+        pronunciation: "vye-BHAH-shee-kah",
+        etymology: "Sanskrit · vaibhasika — 'from the Vaibhasha'",
+        definition: "A Buddhist philosophical school emphasizing realism. Argues that objects exist independently of mind. Contrasts with Yogacara idealism. These debates shaped Buddhist philosophy in India.",
+      },
+      sautrantika: {
+        term: "Sautrāntika",
+        pronunciation: "saw-TRAHN-tee-kah",
+        etymology: "Sanskrit · sutra 'teaching' + antika 'follower'",
+        definition: "A Buddhist school following the sutras. Less dogmatic than Vaibhasika but still realist. Believes in external objects but that they're known indirectly through inference and perception.",
+      },
+      yogacara: {
+        term: "Yogācāra",
+        pronunciation: "yoh-gah-CHAH-rah",
+        etymology: "Sanskrit · yoga 'practice' + cara 'to go'",
+        definition: "Mind-only school of Buddhist philosophy. Argues that objects don't exist independently — consciousness itself is all that exists. Influenced by Buddhist meditation experience where the mind seems primary.",
+      },
+      madhyamaka: {
+        term: "Madhyamaka",
+        pronunciation: "mah-dee-AH-mah-kah",
+        etymology: "Sanskrit · madhya 'middle' + maka 'way'",
+        definition: "The middle way school. Emphasizes emptiness (sunyata) — both self and objects lack independent essence. Seeks a middle between eternalism (things exist) and nihilism (nothing exists).",
+      },
+      tatata: {
+        term: "Tathatā",
+        pronunciation: "tah-tah-TAH",
+        etymology: "Sanskrit · tatha 'thus' + ta 'ness'",
+        definition: "Suchness, thusness. The nature of reality as it actually is, before concepts and labels. Not a thing — the way things are. Realized in meditation when the mind becomes still.",
+      },
+      prajna: {
+        term: "Prajñā-pāramitā",
+        pronunciation: "prah-juh-nah pah-rah-mee-TAH",
+        etymology: "Sanskrit · prajna 'wisdom' + paramita 'perfection'",
+        definition: "Perfection of wisdom, transcendent wisdom. In Mahayana, the highest perfection. Often depicted as a mother — all Buddhas are born from prajna-paramita. The ultimate teaching, often summarized as 'form is emptiness, emptiness is form.'",
+      },
+      sthaviravada: {
+        term: "Sthaviraväda",
+        pronunciation: "stah-VEE-rah-vah-dah",
+        etymology: "Sanskrit · sthavira 'elder' + vada 'teaching'",
+        definition: "The school of the elders. One of the early Buddhist schools emphasizing strict adherence to the original teachings. Theravada Buddhism claims to be the continuation of Sthaviravada.",
+      },
+      mahayana: {
+        term: "Mahāyāna",
+        pronunciation: "mah-hah-YAH-nah",
+        etymology: "Sanskrit · maha 'great' + yana 'vehicle'",
+        definition: "The Great Vehicle. The Buddhist tradition emphasizing bodhisattva practice and enlightenment for all beings. Includes Zen, Tibetan Buddhism, Pure Land. More texts, more Buddhas and bodhisattvas.",
+      },
+      theravada: {
+        term: "Theravāda",
+        pronunciation: "ther-ah-VAH-dah",
+        etymology: "Pali · thera 'elder' + vada 'teaching'",
+        definition: "The Way of the Elders. The Buddhist tradition found mainly in Southeast Asia (Thailand, Sri Lanka, Myanmar). Emphasizes the original Pali Canon and the arhat path. More conservative, less elaboration on cosmology.",
+      },
+      vajrayana: {
+        term: "Vajrayāna",
+        pronunciation: "vaj-rah-YAH-nah",
+        etymology: "Sanskrit · vajra 'lightning bolt, diamond' + yana 'vehicle'",
+        definition: "The Diamond Vehicle, the Thunderbolt Vehicle. The Tantric Buddhism found mainly in Tibet. Uses ritual, visualization, and the transformation of desire. Fastest path to enlightenment, but requires a guru.",
+      },
+      zen: {
+        term: "Zen",
+        pronunciation: "ZEN",
+        etymology: "Japanese · from Sanskrit dhyana (meditation)",
+        definition: "Japanese school of Mahayana Buddhism emphasizing sudden enlightenment and meditation. Famous for koans (paradoxical questions), minimal ritual, directness. Influencing Western philosophy and art.",
+      },
+      pure_land: {
+        term: "Pure Land",
+        pronunciation: "poor LAND",
+        etymology: "Sanskrit · sukhavati 'land of bliss'",
+        definition: "School of Mahayana Buddhism where devotion to Buddha Amitabha allows rebirth in his Pure Land, where enlightenment is easier. Popular in East Asia. For many practitioners, the most accessible form of Buddhism.",
+      },
+      tibetan: {
+        term: "Tibetan Buddhism",
+        pronunciation: "tih-BEH-tun BOO-diz-um",
+        etymology: "From Tibet, the country",
+        definition: "The form of Buddhism practiced in Tibet, Bhutan, Mongolia. A complete form including all Buddhist teachings — Hinayana, Mahayana, and Vajrayana. Known for sophisticated philosophy, reincarnation of lamas, and tantric practice.",
+      },
+      gelug: {
+        term: "Gelug",
+        pronunciation: "GEL-oog",
+        etymology: "Tibetan · gelug 'way of virtue'",
+        definition: "The Yellow Hat school of Tibetan Buddhism. Founded by Je Tsongkhapa in the 14th century. Emphasizes rigorous monastic discipline and philosophical study before tantric practice. The Dalai Lama is the head.",
+      },
+      kagyu: {
+        term: "Kagyu",
+        pronunciation: "KAH-gyoo",
+        etymology: "Tibetan · ka 'teaching' + brgyud 'lineage'",
+        definition: "The oral transmission school. Emphasizes direct teacher-student transmission of teachings and meditation instructions. Known for the guru-student relationship and experiential practice.",
+      },
+      nyingma: {
+        term: "Nyingma",
+        pronunciation: "NYING-mah",
+        etymology: "Tibetan · nyingma 'old'",
+        definition: "The Old School of Tibetan Buddhism. The oldest Tibetan Buddhist tradition, incorporating pre-Buddhist elements and emphasizing dzogchen (great perfection) meditation. Less organized than the newer schools.",
+      },
+      sakya: {
+        term: "Sakya",
+        pronunciation: "SAH-kyah",
+        etymology: "Tibetan · sakya 'grey earth'",
+        definition: "One of the four main schools of Tibetan Buddhism. Emphasizes philosophical study and the practice of Hevajra tantra. Known for producing scholars and maintaining a hereditary system of leadership.",
+      },
+      guru: {
+        term: "Guru",
+        pronunciation: "GOO-roo",
+        etymology: "Sanskrit · guru — 'heavy, weighty, venerable'",
+        definition: "A spiritual teacher. In Buddhism, especially Tibetan Buddhism, the guru relationship is sacred. The guru is your guide — you're supposed to trust their guidance. Can be misused if the guru is unethical.",
+      },
+      roshi: {
+        term: "Rōshi",
+        pronunciation: "ROH-shee",
+        etymology: "Japanese · ro 'old' + shi 'master'",
+        definition: "Zen master. The teacher in a Zen monastery. A roshi is someone who has realized deep insight and can guide others. The roshi-student relationship in Zen is central to training.",
+      },
+      lama: {
+        term: "Lama",
+        pronunciation: "LAH-mah",
+        etymology: "Tibetan · possibly from Sanskrit guru",
+        definition: "A Tibetan Buddhist teacher or monk. 'Lama' is sometimes used loosely to mean any monk, but more properly refers to a teacher. The Dalai Lama is the highest lama in Gelug tradition.",
+      },
+      tulku: {
+        term: "Tulku",
+        pronunciation: "TOOL-koo",
+        etymology: "Tibetan · tulku 'manifestation, emanation'",
+        definition: "A reincarnate lama. In Tibetan Buddhism, high teachers are recognized as reincarnations of previous masters. When a tulku dies, his successor is identified (usually as a young child) and trained.",
+      },
+      rinpoche: {
+        term: "Rinpoche",
+        pronunciation: "rin-POH-chay",
+        etymology: "Tibetan · rinpoche 'precious one'",
+        definition: "A title of respect for a high Tibetan Buddhist teacher. Literally 'precious one.' Often used for tulkus and accomplished masters.",
+      },
+      upasaka: {
+        term: "Upāsaka",
+        pronunciation: "oo-PAH-sah-kah",
+        etymology: "Sanskrit · upa 'near' + saka 'one who sits'",
+        definition: "Lay male practitioner. Someone who has taken refuge in the Buddha, Dharma, and Sangha, but hasn't become a monk. Can take precepts, practice meditation, support the sangha.",
+      },
+      upasika: {
+        term: "Upāsikā",
+        pronunciation: "oo-PAH-see-kah",
+        etymology: "Sanskrit · upasaka with feminine ending",
+        definition: "Lay female practitioner. The female equivalent of upasaka. In some traditions, women are more involved in lay practice than in monastic life.",
+      },
+      bodhi_tree: {
+        term: "Bodhi Tree",
+        pronunciation: "BOH-dee TREE",
+        etymology: "From Sanskrit bodhi 'awakening' + tree",
+        definition: "The fig tree under which Buddha Siddhartha attained enlightenment in Bodh Gaya, India. Still stands today. A symbol of enlightenment. Pilgrims come to sit beneath it.",
+      },
+      bodhimanda: {
+        term: "Bodhimaṇḍa",
+        pronunciation: "boh-dee-MAHN-dah",
+        etymology: "Sanskrit · bodhi 'awakening' + manda 'essence'",
+        definition: "The sacred place of enlightenment. Originally the site under the Bodhi Tree where Buddha sat. Now means any place where enlightenment-seeking happens — a meditation hall, a sanctuary.",
+      },
+      stupa: {
+        term: "Stūpa",
+        pronunciation: "STOO-pah",
+        etymology: "Sanskrit · stupa — 'heap, mound'",
+        definition: "A mound-shaped Buddhist monument. Contains relics of the Buddha or great teachers. Walking around a stupa is a form of practice. Stupas mark sacred sites and remind practitioners of the path.",
+      },
+      pagoda: {
+        term: "Pagoda",
+        pronunciation: "puh-GOH-duh",
+        etymology: "From Portuguese pagode, from Sanskrit bhagavati",
+        definition: "A tiered tower, usually in East Asian Buddhism. Related to the stupa but evolved differently. Often used as temples. The architecture encodes Buddhist teachings.",
+      },
+        vihara: {
+        term: "Vihāra",
+        pronunciation: "vih-HAH-rah",
+        etymology: "Sanskrit · vi 'apart' + hara 'to carry'",
+        definition: "A Buddhist monastery. Traditionally a place where monks live, study, and practice together. Some viharas are very large with hundreds of monks. Others are small hermitages.",
+      },
+      gompa: {
+        term: "Gompa",
+        pronunciation: "GOM-pah",
+        etymology: "Tibetan · gompa 'solitary place'",
+        definition: "A Tibetan Buddhist monastery. Often located in remote, beautiful areas. A gompa is both a building and a community of practitioners. Some are enormous with thousands of monks.",
+      },
+      ashram: {
+        term: "Āśrama",
+        pronunciation: "AHS-rahm",
+        etymology: "Sanskrit · asrama — 'hermitage, stage of life'",
+        definition: "A hermitage or spiritual community. Not strictly Buddhist, but used in Buddhism to describe a place of retreat and study. Ashram suggests a place dedicated to spiritual practice.",
+      },
+      retreat: {
+        term: "Meditation Retreat",
+        pronunciation: "MED-i-TAY-shun rih-TREET",
+        etymology: "From French retrait",
+        definition: "An extended period of intensive practice, often silent. Retreats can last from a weekend to years. In a retreat, you sit for many hours, minimizing distractions. Deep insights often arise.",
+      },
+      sesshin: {
+        term: "Sesshín",
+        pronunciation: "sen-SHEEN",
+        etymology: "Japanese · sesshin 'all together, collection of mind'",
+        definition: "A Zen retreat, usually several days. Intense sitting, minimal talking, simple meals. The term emphasizes the collective focus of the group.",
+      },
+      darkroom: {
+        term: "Dark Retreat",
+        pronunciation: "DARK rih-TREET",
+        etymology: "From darkness + retreat",
+        definition: "An advanced Tantric Buddhist practice. You sit in total darkness for extended periods (often 49 days or more) to accelerate spiritual development. Not for beginners. Can lead to significant psychological states.",
+      },
+      pranayama: {
+        term: "Breath Practice",
+        pronunciation: "BRETH PRAK-tis",
+        etymology: "Generalized from pranayama",
+        definition: "Structured breathing exercises used in meditation. Common in Buddhism is anapanasati, mindfulness of breathing — watching the breath naturally without controlling it. The breath is a bridge between body and mind.",
+      },
+      four_noble_truths: {
+        term: "Four Noble Truths",
+        pronunciation: "for NOH-bul TROOTHZ",
+        etymology: "From Buddhism's core teachings",
+        definition: "The foundation of Buddha's teaching: (1) Suffering exists. (2) Suffering has a cause (craving). (3) Suffering can end (nirvana). (4) There is a path to the end of suffering (Eightfold Path). Everything else in Buddhism elaborates these four points.",
+      },
+      eightfold_path: {
+        term: "Eightfold Path",
+        pronunciation: "AYT-fold PATH",
+        etymology: "From Buddhism's core teachings",
+        definition: "The practical path to ending suffering: right view, right intention, right speech, right action, right livelihood, right effort, right mindfulness, right concentration. 'Right' means aligned with wisdom and compassion, not moralistic.",
+      },
+      five_precepts: {
+        term: "Five Precepts",
+        pronunciation: "FYV PREY-septs",
+        etymology: "From Buddhist ethical training",
+        definition: "Basic ethical guidelines: (1) Avoid killing. (2) Avoid stealing. (3) Avoid sexual misconduct. (4) Avoid false speech. (5) Avoid intoxication. Lay practitioners take these voluntarily, not as laws but as commitments to themselves.",
+      },
+      boddhisattva_vow: {
+        term: "Bodhisattva Vow",
+        pronunciation: "boh-dee-SAT-vuh VOW",
+        etymology: "From bodhisattva path",
+        definition: "In Mahayana Buddhism, the commitment to attain enlightenment not for oneself alone but for all beings. 'However innumerable sentient beings are, I vow to liberate them.' A powerful commitment that shapes practice.",
+      },
+      three_jewels: {
+        term: "Three Jewels",
+        pronunciation: "three JOO-elz",
+        etymology: "From Buddhist refuges",
+        definition: "The Buddha, Dharma, and Sangha. Taking refuge in the Three Jewels is becoming Buddhist. They're called 'jewels' because they're precious and rare — the path to enlightenment is available to all beings.",
+      },
+      buddha_field: {
+        term: "Buddha Field",
+        pronunciation: "BOO-duh FEELD",
+        etymology: "From Mahayana concept",
+        definition: "The realm or influence of a Buddha. Buddha Amitabha's Pure Land is a Buddha field. A Buddha's enlightenment radiates outward, creating conditions favorable for other beings to practice and become enlightened.",
+      },
+      kalpa: {
+        term: "Kalpa",
+        pronunciation: "KAL-pah",
+        etymology: "Sanskrit · kalpa 'to arrange'",
+        definition: "An eon, a vast span of time. One kalpa is said to be the time it takes for an iron mountain to be worn away by a cloth brushed against it once per century. Buddhism uses kalpas to describe vast time cycles.",
+      },
+      nirmanakaya: {
+        term: "Nirmāṇakāya",
+        pronunciation: "nir-mah-nah-KAH-yah",
+        etymology: "Sanskrit · nirmana 'creation' + kaya 'body'",
+        definition: "The transformation body, the manifestation of a Buddha in human form. Buddha Shakyamuni is a nirmanakaya of the eternal Buddha nature. Each Buddha appears in different eras.",
+      },
+      sambhogakaya: {
+        term: "Sambhogakāya",
+        pronunciation: "sahm-boh-gah-KAH-yah",
+        etymology: "Sanskrit · sambhoga 'enjoyment' + kaya 'body'",
+        definition: "The enjoyment body, the celestial form of a Buddha. Perceived only by advanced bodhisattvas. Has unlimited lifespan and radiates light. A more subtle manifestation than the human body.",
+      },
+      dharmakaya: {
+        term: "Dharmakāya",
+        pronunciation: "dhar-mah-KAH-yah",
+        etymology: "Sanskrit · dharma 'truth' + kaya 'body'",
+        definition: "The truth body, the ultimate body of a Buddha. Not separate from reality itself — it's enlightened consciousness or ultimate truth embodied. All Buddhas share the same dharmakaya.",
+      },
+      trikaya: {
+        term: "Trikāya",
+        pronunciation: "tree-KAH-yah",
+        etymology: "Sanskrit · tri 'three' + kaya 'body'",
+        definition: "Three bodies of Buddha: dharmakaya (truth body), sambhogakaya (enjoyment body), nirmanakaya (transformation body). A sophisticated Buddhist teaching about how Buddha's realities manifest at different levels.",
+      },
+      sukkha: {
+        term: "Sukkha",
+        pronunciation: "SOO-kah",
+        etymology: "Pali · sukkha — 'happiness, ease'",
+        definition: "Happiness, ease, pleasure. In Buddhist psychology, sukkha is natural happiness that arises when dukkha diminishes. The peace and contentment that comes from understanding.",
+      },
+      lokavida: {
+        term: "Lokavid",
+        pronunciation: "loh-kah-VID",
+        etymology: "Sanskrit · loka 'world' + vid 'know'",
+        definition: "One who knows the world. An epithet for Buddha — someone who understands how the world works, how beings function, what leads to suffering and happiness.",
+      },
+      purisa: {
+        term: "Puruṣa",
+        pronunciation: "poo-ROO-shah",
+        etymology: "Sanskrit · purusha — 'person, man'",
+        definition: "A person, individual. In Buddhist texts, the term for a sentient being. 'Akshobya Buddha tames difficult purushas' — he teaches people who are hard to teach.",
+      },
+      deva: {
+        term: "Deva",
+        pronunciation: "DAY-vah",
+        etymology: "Sanskrit · dev — 'to shine, to shine forth'",
+        definition: "A god or celestial being. Buddhist cosmology includes devas in the higher realms. They have power and beauty but are still subject to dukkha — even heavenly beings suffer.",
+      },
+      brahma: {
+        term: "Brahma",
+        pronunciation: "BRAH-mah",
+        etymology: "Sanskrit · brahma 'vast, infinite'",
+        definition: "A high deva. In Buddhist cosmology, Brahma is a powerful celestial being but not supreme — the Buddha has surpassed Brahma. Brahma even pays respects to Buddha in some texts.",
+      },
+      chakravartin: {
+        term: "Chakravartin",
+        pronunciation: "chak-rah-VAR-tin",
+        etymology: "Sanskrit · chakra 'wheel' + vartin 'turning'",
+        definition: "A universal monarch, a wheel-turning king. In Buddhist legend, a great king who rules the whole earth according to dharma. Considered a fortunate birth but not as high as becoming a Buddha.",
+      },
+      asuravara: {
+        term: "Asura",
+        pronunciation: "ah-SOO-rah",
+        etymology: "Sanskrit · a 'without' + sura 'liquor, power'",
+        definition: "Demigods, titans, jealous gods. In Buddhist cosmology, one of the realms of rebirth. Asuras have power but are constantly fighting. Seen as representing anger and pride.",
+      },
+      preta: {
+        term: "Preta",
+        pronunciation: "PRAY-tah",
+        etymology: "Sanskrit · preta — 'dead, departed'",
+        definition: "A hungry ghost. In Buddhist cosmology, one of the realms of rebirth. Pretas are beings with overwhelming cravings (for food, drink, etc.) but inability to satisfy them. Represents greed.",
+      },
+      hell: {
+        term: "Naraka",
+        pronunciation: "nah-RAH-kah",
+        etymology: "Sanskrit · naraka 'hell'",
+        definition: "Hell realms in Buddhist cosmology. Not permanent — just intense suffering caused by past actions. Described in detail in some texts: extreme heat, cold, sharp implements. But they're temporary.",
+      },
+      animal: {
+        term: "Animal Realm",
+        pronunciation: "AN-i-mul REALM",
+        etymology: "From Buddhist cosmology",
+        definition: "One of the six realms of rebirth. Animals have limited consciousness and are often exploited. In Buddhist ethics, this is why killing animals is serious — you could be killing a being who was once your mother.",
+      },
+      human: {
+        term: "Human Realm",
+        pronunciation: "HU-mun REALM",
+        etymology: "From Buddhist cosmology",
+        definition: "The realm we inhabit. Perfect for practice — not so comfortable that we don't seek the path, not so painful that practice is impossible. A precious opportunity, not to be wasted.",
+      },
+      asuri: {
+        term: "Asuri Realm",
+        pronunciation: "ah-SOO-ree REALM",
+        etymology: "From asura, realm of jealous gods",
+        definition: "The realm of asuras/jealous gods. Characterized by constant warfare and competition. Better than lower realms but trapped in aggression and pride.",
+      },
+      deva_realm: {
+        term: "Deva Realm",
+        pronunciation: "DAY-vah REALM",
+        Etymology: "From deva, celestial being",
+        definition: "The celestial realms where devas live. Beautiful, peaceful, long-lived. But not permanent — all beings eventually die and are reborn. Deva rebirth is a reward but not the goal.",
+      },
+      samsaric_realm: {
+        term: "Six Realms",
+        pronunciation: "SIKS REALMZ",
+        etymology: "From Buddhist cosmology of rebirth",
+        definition: "The six possible realms of rebirth: hell, hungry ghosts, animals, asuras, humans, devas. All six are within samsara (cyclic existence). Buddhism teaches that practicing dharma leads beyond these realms.",
+      },
+      wheel_of_life: {
+        term: "Wheel of Life",
+        pronunciation: "WHEEL of LYFE",
+        etymology: "From bhavachakra, the cycle of becoming",
+        definition: "A symbolic diagram showing the six realms and the causes of rebirth. The whole wheel is in the mouth of a demon (impermanence). Used in Tibetan Buddhism as a teaching diagram about the nature of samsara.",
+      },
+      dharma_chakra: {
+        term: "Dharma Chakra",
+        pronunciation: "DAR-mah CHAK-rah",
+        etymology: "Sanskrit · dharma 'teaching' + chakra 'wheel'",
+        definition: "The wheel of dharma, teaching. Represents Buddha's turning of the wheel of teaching. The chakra symbol (with spokes) is used in many Buddhist traditions.",
+      },
+      bodhi_path: {
+        term: "Bodhi Path",
+        pronunciation: "BOH-dee PATH",
+        etymology: "From bodhi 'awakening' + path",
+        definition: "The path to enlightenment. Each Buddhist school emphasizes different aspects, but all agree the path requires practice, wisdom, and ethical conduct.",
+      },
+      prarabdha_karma: {
+        term: "Prarabdha Karma",
+        pronunciation: "prah-RAH-bah-dah KAR-mah",
+        etymology: "Sanskrit · prarabdha 'begun' + karma 'action'",
+        definition: "Karma that is currently ripening, that's producing results now. Explains why enlightened beings might still experience pain — past karma is playing out. But they don't create new karma reactively.",
+      },
+      akarma: {
+        term: "Akarma",
+        pronunciation: "ah-KAR-mah",
+        etymology: "Sanskrit · a 'without' + karma 'action'",
+        definition: "Absence of karma. Not inaction, but action without attachment to results or ego-driven intention. The enlightened being acts but doesn't accumulate karma.",
+      },
+      niyama: {
+        term: "Niyama",
+        pronunciation: "nee-YAH-mah",
+        etymology: "Sanskrit · niyama — 'restraint, observance'",
+        definition: "Observances, positive practices. Usually paired with yama (abstinences). In yoga and Buddhist ethics, niyama includes purity, contentment, austerity, study, and surrender.",
+      },
+      yama: {
+        term: "Yama",
+        pronunciation: "YAH-mah",
+        Etymology: "Sanskrit · yama — 'restraint, control'",
+        definition: "Restraints, abstinences. The ethical foundation. In yoga and Buddhism, yama includes non-violence, truthfulness, non-stealing, chastity, and non-attachment.",
+      },
+      chakrasamvara: {
+        term: "Chakrasamvara",
+        pronunciation: "chak-rah-sahm-VAH-rah",
+        etymology: "Sanskrit · chakra 'wheel' + samvara 'binding'",
+        definition: "A key deity in Tantric Buddhism, especially important in Kagyu tradition. Visualization and meditation on Chakrasamvara leads to realization of ultimate reality as union of compassion and emptiness.",
+      },
+      kalachakra: {
+        term: "Kalachakra",
+        pronunciation: "kah-lah-CHAK-rah",
+        etymology: "Sanskrit · kala 'time' + chakra 'wheel'",
+        definition: "The wheel of time, a complex Tantric Buddhist system. Includes astrology, cosmology, and meditation practice. The Kalachakra initiation is given by the Dalai Lama to thousands of people.",
+      },
+      hevajra: {
+        term: "Hevajra",
+        pronunciation: "hay-VAH-jrah",
+        etymology: "Sanskrit · possibly from 'he' + 'vajra'",
+        definition: "A deity in Tantric Buddhism, especially important in Sakya tradition. Represents compassion and the union of wisdom and method. Practice involves visualizing and identifying with Hevajra.",
+      },
+      guhyasamaja: {
+        term: "Guhyasamaja",
+        pronunciation: "goo-hyah-sah-MAH-jah",
+        etymology: "Sanskrit · guhya 'secret' + samaja 'gathering'",
+        definition: "Secret gathering, a key Tantric deity. One of the highest practices in Tibetan Buddhism. Very complex visualization — represents enlightened mind.",
+      },
+      dzogchen: {
+        term: "Dzogchen",
+        pronunciation: "DZOHG-chen",
+        etymology: "Tibetan · dzog 'complete' + chen 'great'",
+        definition: "Great perfection, the highest teaching in Nyingma Buddhism. The view that enlightenment is not something to achieve but to recognize as always present. The simplest and most difficult path.",
+      },
+      mahamudra: {
+        term: "Mahamudra",
+        pronunciation: "mah-hah-MOO-drah",
+        etymology: "Sanskrit · maha 'great' + mudra 'gesture'",
+        definition: "Great seal, the ultimate nature of mind. In Kagyu tradition, the highest realization. The view that ultimate reality is the natural state of mind, empty and luminous.",
+      },
+      ringtone: {
+        term: "Ringtone Buddhism",
+        pronunciation: "RING-tone BOO-diz-um",
+        etymology: "Modern colloquialism",
+        definition: "Buddhism adapted for modern life. Using apps, online sanghas, and secular mindfulness practices. Controversial — some see it as democratizing practice, others as diluting essential teachings.",
+      },
+      mindfulness: {
+        term: "Mindfulness",
+        pronunciation: "MYND-ful-nes",
+        etymology: "From sati, Pali for 'memory, attention'",
+        definition: "Present-moment awareness without judgment. The most popular Western Buddhist teaching. Mindfulness-based stress reduction (MBSR) and mindfulness-based cognitive therapy (MBCT) are secular applications.",
+      },
+      westernutzung: {
+        term: "Western Buddhism",
+        pronunciation: "WES-turn BOO-diz-um",
+        etymology: "From Western practice context",
+        definition: "Buddhism as it's adapted and practiced in Western countries. Often secularized, emphasizing meditation and psychology. Sometimes losing ritual and community elements.",
+      },
+      secular_buddhism: {
+        term: "Secular Buddhism",
+        pronunciation: "SEK-yuh-ler BOO-diz-um",
+        etymology: "From secular worldview",
+        definition: "Buddhism practiced without supernatural beliefs. Focuses on meditation, ethics, and psychology. Rejects rebirth, heavens, and other cosmological elements. Growing among Western practitioners.",
+      },
+      engaged_buddhism: {
+        term: "Engaged Buddhism",
+        pronunciation: "en-GAJD BOO-diz-um",
+        etymology: "From Thich Nhat Hanh's term",
+        definition: "Buddhism actively addressing social issues. Environmental activism, social justice, peace work done from a Buddhist perspective. Integrates wisdom with action.",
+      },
+      socially_engaged: {
+        term: "Socially Engaged Buddhism",
+        pronunciation: "SOH-shuh-lee en-GAJD BOO-diz-um",
+        etymology: "From Buddhist activism",
+        definition: "The same as engaged Buddhism — Buddhism that responds to social suffering, not just individual suffering. Thich Nhat Hanh is a famous example.",
+      },
+      what_is_buddhism: {
+        term: "What is Buddhism?",
+        pronunciation: "WAT iz BOO-diz-um",
+        etymology: "From the question itself",
+        definition: "Buddhism is not a religion in the theistic sense — there's no creator God. It's not purely a philosophy — it requires practice. It's a path, a set of teachings about the nature of suffering and the way to end it.",
+      },
+    };
+
+    const Term = ({ term, children }) => {
+      const [isOpen, setIsOpen] = useState(false);
+      const [popoverPos, setPopoverPos] = useState("top");
+      const termRef = useRef(null);
+      const definition = definitions[term.toLowerCase()];
+
+      useEffect(() => {
+        if (isOpen && termRef.current) {
+          const rect = termRef.current.getBoundingClientRect();
+          if (rect.top < 250) {
+            setPopoverPos("bottom");
+          } else {
+            setPopoverPos("top");
+          }
+        }
+      }, [isOpen]);
+
+      if (!definition) return <span>{children || term}</span>;
+
+      return (
+        <span
+          ref={termRef}
+          className="term"
+          onClick={() => setIsOpen(!isOpen)}
+          style={{ cursor: "pointer", borderBottom: "1px dotted #9E9E9E" }}
+        >
+          {children || term}
+          {isOpen && (
+            <div className={`popover popover-${popoverPos}`}>
+              <div className="popover-term">{definition.term}</div>
+              <div className="popover-pronunciation">{definition.pronunciation}</div>
+              <div className="popover-etymology">{definition.etymology}</div>
+              <div className="popover-definition">{definition.definition}</div>
+            </div>
+          )}
+        </span>
+      );
+    };
+
+    const Chapter = ({ number, title, children }) => (
+      <section className="chapter" id={`chapter-${number}`}>
+        <h2>{number}. {title}</h2>
+        <div className="chapter-content">{children}</div>
+      </section>
+    );
+
+    const App = () => {
+      const [currentChapter, setCurrentChapter] = useState(1);
+      const [showTableOfContents, setShowTableOfContents] = useState(false);
+
+      const chapters = [
+        {
+          number: 1,
+          title: "What Even Is Buddhism?",
+          content: (
+            <>
+              <p>
+                <Term term="Buddhism">Buddhism</Term> doesn't fit neatly into Western categories. It's not a religion in the sense of worshipping a god. There's no creator deity. No cosmic judge. No doctrine of original sin. And nobody expects you to take it on faith. Instead, the Buddha (who was a human, not a god) basically said: "Don't believe me. Test it yourself." Which is wild. And refreshing.
+              </p>
+              <p>
+                Buddhism is a path. A set of practices and insights aimed at understanding the nature of suffering and finding your way out of it. It's been around for 2,500 years, and it keeps adapting to wherever it goes, which is why Buddhism in Tibet looks different from Buddhism in Japan, which looks different from Buddhism in Thailand. Different schools, different emphasises. But the core remains: wake up to how things actually are, stop struggling against reality, and find peace.
+              </p>
+              <p>
+                The Buddha wasn't magical. He was born Siddhartha Gautama. He had a family, a house, privilege. Then one day, around age 29, he saw something that shook him: old age, sickness, death. He realized that no amount of money or power would keep these things from happening. So he left. He sat under a tree for years. He cut himself off from everything until finally, one night, he figured it out. He became the <Term term="buddha">Buddha</Term>, which just means "the awakened one."
+              </p>
+              <p>
+                What did he figure out? That suffering exists, that it has a cause, and that there's a way out. That's the whole teaching in one sentence. But understanding it — really understanding it — takes a lifetime of practice.
+              </p>
+            </>
+          ),
+        },
+        {
+          number: 2,
+          title: "The Core Concepts",
+          content: (
+            <>
+              <p>
+                If you're going to understand Buddhism, you need to know a few key ideas. They're not ideas in the sense of "believe this." They're more like maps. Maps of how suffering works and how to get unstuck.
+              </p>
+              <p>
+                The first is <Term term="dukkha">Dukkha</Term>. Translated as "suffering," but it's bigger than that. It's the fundamental unsatisfactoriness baked into existence. That nagging sense that something is always slightly off. You get what you want and it's not as good as you expected. You lose what you have. Even good things are tinged with the knowledge that they won't last. Life is like a wheel with an off-center axle. It rolls, but never quite smoothly.
+              </p>
+              <p>
+                The second is <Term term="tanha">Tanha</Term>. Craving. The compulsive wanting — both toward things and away from things. The "I must have this" or "I must not have that." This is what keeps the wheel turning. It's the engine of suffering.
+              </p>
+              <p>
+                The third is <Term term="sunyata">Śūnyatā</Term>. Emptiness. Not nothing — everything is full of relationships and meaning. But emptiness in the sense that nothing exists in isolation. Everything is interconnected, interdependent, constantly changing. There's no fixed, independent essence to anything, including yourself. This is the hardest idea to grasp, but also the most liberating.
+              </p>
+              <p>
+                And the fourth is <Term term="anatta">Anattā</Term>. No-self. There's no permanent "I" inside you. You're a process, not a thing. A verb, not a noun. This is often the sticking point for Westerners. But watch your own mind closely and you'll see it's true. Where exactly is the "you" that's reading these words?
+              </p>
+            </>
+          ),
+        },
+        {
+          number: 3,
+          title: "The Path: How to Actually Practice",
+          content: (
+            <>
+              <p>
+                Okay, so you understand the problem. Suffering is real, it's caused by craving, and it's based on a fundamental misunderstanding of how reality works. Now what?
+              </p>
+              <p>
+                The Buddha laid out a path called the <Term term="eightfold_path">Eightfold Path</Term>. It's simple in principle: develop wisdom, develop ethical conduct, train your mind. The eight parts are: right view, right intention, right speech, right action, right livelihood, right effort, right mindfulness, and right concentration.
+              </p>
+              <p>
+                "Right" here doesn't mean moralistic. It means aligned with wisdom and compassion. It means understanding what actually causes harm and what leads to peace.
+              </p>
+              <p>
+                The most foundational practice is <Term term="mindfulness">mindfulness</Term>. Paying attention to what's happening, right now, without judgment. Sitting and watching your breath. Watching your thoughts arise and pass. Watching your emotions. This sounds simple, but it's the whole practice. When you really pay attention to your experience, things start to shift. You see patterns. You see your own reactivity. You see that thoughts aren't facts. You gain some space.
+              </p>
+              <p>
+                Another core practice is <Term term="vipassana">Vipassanā</Term>, insight meditation. You're not just observing. You're noticing the constant change — sensations arising and passing, thoughts appearing and dissolving, emotions coming and going. Through this observation, understanding deepens naturally. You see <Term term="anicca">Anicca</Term>, impermanence, directly. Not as a concept, but as lived experience.
+              </p>
+              <p>
+                And there's <Term term="metta">Mettā</Term>, loving-kindness meditation. You systematically cultivate goodwill toward yourself and all beings. It's not sentimental. It's a commitment: "May I be free from suffering. May you be free from suffering. May all beings be free from suffering." This trains the mind in compassion.
+              </p>
+            </>
+          ),
+        },
+        {
+          number: 4,
+          title: "Different Flavors: Schools and Traditions",
+          content: (
+            <>
+              <p>
+                Buddhism spread from India to Asia around 2,000 years ago. As it moved, it adapted. Different countries, different cultures, different needs. So today there are major schools.
+              </p>
+              <p>
+                The oldest is <Term term="theravada">Theravāda</Term>, the Way of the Elders, found mainly in Southeast Asia (Thailand, Sri Lanka, Myanmar). It emphasizes the original Pali texts and focuses on the <Term term="arhat">Arhat</Term> path — the pursuit of individual enlightenment. It's more conservative, less elaborate cosmology. Very practical.
+              </p>
+              <p>
+                <Term term="mahayana">Mahāyāna</Term>, the Great Vehicle, is found in East Asia (China, Japan, Tibet, Vietnam). It emphasizes the <Term term="bodhisattva">Bodhisattva</Term> path — enlightenment for all beings, not just yourself. It has more texts, more Buddhas and bodhisattvas, more ritual. Within Mahayana, there are many sub-schools.
+              </p>
+              <p>
+                <Term term="zen">Zen</Term> Buddhism, for example, came from China to Japan and emphasizes sudden insight and meditation. It's minimalist, direct, often paradoxical. Famous for <Term term="koans">koans</Term> — riddles that short-circuit the rational mind. A koan might be "What is the sound of one hand clapping?" Not to be solved intellectually, but to be sat with until the mind breaks through.
+              </p>
+              <p>
+                <Term term="pure_land">Pure Land</Term> Buddhism emphasizes devotion to Buddha Amitabha. Practitioners recite his name, trusting in his vow to guide them to his Pure Land after death, where enlightenment is easier. It's the most popular form in East Asia.
+              </p>
+              <p>
+                And <Term term="vajrayana">Vajrayāna</Term>, the Diamond Vehicle, is Tibetan Buddhism. It's a complete system including all the other teachings, plus <Term term="tantra">Tantra</Term> — advanced practices using ritual, visualization, and the transformation of desire. Requires a teacher and works with the unconscious mind directly.
+              </p>
+            </>
+          ),
+        },
+        {
+          number: 5,
+          title: "The Community and the Path",
+          content: (
+            <>
+              <p>
+                Buddhism isn't just personal practice. It's communal. The Buddha established a <Term term="sangha">Sangha</Term> — a community of practitioners. This is considered so important that the Three Jewels are Buddha, Dharma, and Sangha. Three equal pillars. You're not doing this alone.
+              </p>
+              <p>
+                In many Buddhist traditions, there's a distinction between the monastic sangha and the lay sangha. <Term term="bhikkhu">Bhikkhu</Term> and <Term term="bhikkhuni">Bhikkhuni</Term> (monks and nuns) dedicate their lives to practice. They live under vows and study deeply. They're supported by the lay community, and in return, they teach and embody the path.
+              </p>
+              <p>
+                Lay practitioners take refuge and practice too, usually with family and work obligations. They might take the <Term term="five_precepts">Five Precepts</Term> — commitments to avoid killing, stealing, sexual misconduct, false speech, and intoxication. Not rules handed down from above, but agreements with yourself about how to live without harming.
+              </p>
+              <p>
+                The teacher-student relationship is sacred in Buddhism, especially in Tibetan Buddhism where the <Term term="guru">Guru</Term> or <Term term="lama">Lama</Term> is central to practice. The teacher is your guide. You're meant to trust their guidance. This can be misused if the teacher is unethical, so choose carefully. But a good teacher can accelerate your progress immensely.
+              </p>
+              <p>
+                Meditation <Term term="retreat">retreats</Term> are common. You go somewhere, often silent, and sit for many hours a day. Maybe a weekend, maybe weeks. In the silence and simplicity, the mind settles. Deep insights often arise.
+              </p>
+            </>
+          ),
+        },
+        {
+          number: 6,
+          title: "Buddhism and Modernity",
+          content: (
+            <>
+              <p>
+                Buddhism has always adapted. It's not a fixed doctrine handed down from on high. It's a living practice that meets people where they are.
+              </p>
+              <p>
+                In the West, Buddhism has become increasingly secularized. <Term term="secular_buddhism">Secular Buddhism</Term> focuses on meditation, ethics, and psychology, without the cosmological elements like rebirth and celestial beings. <Term term="mindfulness">Mindfulness</Term> is everywhere now — in schools, hospitals, workplaces. Mindfulness-based stress reduction (MBSR) and mindfulness-based cognitive therapy (MBCT) are supported by rigorous research.
+              </p>
+              <p>
+                Some argue this is democratizing Buddhism, making it accessible. Others worry it's diluting the essential teachings, removing the transformative aspects. There's truth to both views. A secular practice is better than no practice. But Buddhism at its depths involves profound spiritual transformation, not just stress reduction.
+              </p>
+              <p>
+                <Term term="engaged_buddhism">Engaged Buddhism</Term> is another modern movement. Rather than withdrawing from the world, engaged Buddhists address social issues — environmental activism, social justice, peace work — from a Buddhist perspective. Thich Nhat Hanh, a Vietnamese Buddhist monk, pioneered this in response to the Vietnam War. He's said, "Don't just sit there. Act." But act with awareness, compassion, and non-violence.
+              </p>
+              <p>
+                The question for modern Buddhism is how to honor the tradition while making it relevant. How to maintain rigor and depth while opening doors. There's no single answer, and Buddhist communities are navigating this in different ways.
+              </p>
+            </>
+          ),
+        },
+        {
+          number: 6,
+          title: "The Tibetan View",
+          content: (
+            <>
+              <p>
+                Tibetan Buddhism is distinct. It's the form of Buddhism that incorporates all the major Buddhist teachings — Hinayana ethics, Mahayana bodhisattva practice, and Vajrayana tantra — into a cohesive system. It's complex, sophisticated, and very much alive.
+              </p>
+              <p>
+                The dominant school is <Term term="gelug">Gelug</Term>, the Yellow Hat school, founded by Je Tsongkhapa in the 14th century. It emphasizes rigorous monastic discipline and philosophical study before engaging in tantric practice. The Dalai Lama is the head of the Gelug school.
+              </p>
+              <p>
+                Other schools include <Term term="kagyu">Kagyu</Term>, which emphasizes the guru-student relationship and direct transmission of meditation instructions. <Term term="nyingma">Nyingma</Term>, the oldest school, which emphasizes <Term term="dzogchen">Dzogchen</Term> (great perfection) meditation. And <Term term="sakya">Sakya</Term>, known for philosophical rigor and the practice of Hevajra tantra.
+              </p>
+              <p>
+                A distinctive feature of Tibetan Buddhism is the system of <Term term="tulku">Tulku</Term> reincarnates. High teachers are recognized as reincarnations of previous masters. When a tulku dies, the next one is identified (usually as a young child) and trained. This has both advantages and challenges. The Dalai Lama is considered a reincarnation of Avalokiteshvara, the bodhisattva of compassion.
+              </p>
+              <p>
+                Tibetan Buddhism uses visualization extensively. In tantric practice, you visualize yourself as a <Term term="yidam">yidam</Term> (deity) or as an enlightened being, embodying wisdom and compassion. This is not worship. It's psychological transformation — you're reprogramming your identity at the deepest levels.
+              </p>
+              <p>
+                <Term term="mahamudra">Mahamudra</Term> and <Term term="dzogchen">Dzogchen</Term> are the highest teachings, the ultimate simplification. The view that enlightenment is not something to achieve but to recognize as already present. The natural state of mind is empty and luminous. The goal is not to become enlightened but to stop obscuring what you already are.
+              </p>
+            </>
+          ),
+        },
+      ];
+
+      const tableOfContents = chapters.map((ch) => (
+        <li key={ch.number}>
+          <a
+            href={`#chapter-${ch.number}`}
+            onClick={(e) => {
+              e.preventDefault();
+              setCurrentChapter(ch.number);
+              setShowTableOfContents(false);
+            }}
+          >
+            {ch.number}. {ch.title}
+          </a>
+        </li>
+      ));
+
+      return (
+        <div className="app">
+          <header className="header">
+            <h1>Buddhism Basics</h1>
+            <p className="subtitle">A modern guide to Buddhist fundamentals.</p>
+            <button
+              className="toc-toggle"
+              onClick={() => setShowTableOfContents(!showTableOfContents)}
+            >
+              ☰ Table of Contents
+            </button>
+          </header>
+
+          {showTableOfContents && (
+            <nav className="table-of-contents">
+              <ol>{tableOfContents}</ol>
+            </nav>
+          )}
+
+          <main className="main-content">
+            {chapters[currentChapter - 1] && (
+              <Chapter
+                number={chapters[currentChapter - 1].number}
+                title={chapters[currentChapter - 1].title}
+              >
+                {chapters[currentChapter - 1].content}
+              </Chapter>
+            )}
+
+            <nav className="chapter-nav">
+              {currentChapter > 1 && (
+                <button
+                  className="nav-button"
+                  onClick={() => setCurrentChapter(currentChapter - 1)}
+                >
+                  ← Previous
+                </button>
+              )}
+              {currentChapter < chapters.length && (
+                <button
+                  className="nav-button"
+                  onClick={() => setCurrentChapter(currentChapter + 1)}
+                >
+                  Next →
+                </button>
+              )}
+            </nav>
+          </main>
+
+          <style>{`
+            @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Lora:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+            * {
+              margin: 0;
+              padding: 0;
+              box-sizing: border-box;
+            }
+
+            body {
+              background-color: #0E0905;
+              color: #E8E8E8;
+              font-family: 'Lora', serif;
+              line-height: 1.8;
+              font-size: 16px;
+            }
+
+            .app {
+              min-height: 100vh;
+              background: linear-gradient(135deg, #0E0905 0%, #1a1410 50%, #0E0905 100%);
+            }
+
+            .header {
+              background: linear-gradient(180deg, rgba(14, 9, 5, 0.95) 0%, rgba(26, 20, 16, 0.9) 100%);
+              padding: 3rem 2rem;
+              text-align: center;
+              border-bottom: 1px solid rgba(158, 158, 158, 0.1);
+              box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            }
+
+            .header h1 {
+              font-family: 'Playfair Display', serif;
+              font-size: 3.5rem;
+              font-weight: 900;
+              color: #D4AF37;
+              text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+              margin-bottom: 0.5rem;
+              letter-spacing: -0.02em;
+            }
+
+            .subtitle {
+              font-family: 'Lora', serif;
+              font-size: 1.1rem;
+              color: #9E9E9E;
+              font-style: italic;
+              margin-bottom: 2rem;
+            }
+
+            .toc-toggle {
+              background-color: rgba(212, 175, 55, 0.1);
+              color: #D4AF37;
+              border: 1px solid #D4AF37;
+              padding: 0.75rem 1.5rem;
+              border-radius: 4px;
+              cursor: pointer;
+              font-family: 'Lora', serif;
+              font-size: 1rem;
+              transition: all 0.3s ease;
+            }
+
+            .toc-toggle:hover {
+              background-color: rgba(212, 175, 55, 0.2);
+            }
+
+            .table-of-contents {
+              background: rgba(26, 20, 16, 0.8);
+              padding: 2rem;
+              margin: 0;
+              border-bottom: 1px solid rgba(158, 158, 158, 0.1);
+            }
+
+            .table-of-contents ol {
+              list-style-position: inside;
+              max-width: 900px;
+              margin: 0 auto;
+            }
+
+            .table-of-contents li {
+              margin: 1rem 0;
+              padding-left: 1rem;
+            }
+
+            .table-of-contents a {
+              color: #D4AF37;
+              text-decoration: none;
+              transition: color 0.3s ease;
+            }
+
+            .table-of-contents a:hover {
+              color: #E8D5B7;
+              text-decoration: underline;
+            }
+
+            .main-content {
+              max-width: 900px;
+              margin: 0 auto;
+              padding: 3rem 2rem;
+            }
+
+            .chapter {
+              margin-bottom: 4rem;
+            }
+
+            .chapter h2 {
+              font-family: 'Playfair Display', serif;
+              font-size: 2.5rem;
+              color: #D4AF37;
+              margin-bottom: 2rem;
+              border-bottom: 2px solid rgba(212, 175, 55, 0.3);
+              padding-bottom: 1rem;
+            }
+
+            .chapter-content p {
+              margin-bottom: 1.5rem;
+              color: #E8E8E8;
+              line-height: 1.9;
+            }
+
+            .term {
+              cursor: pointer;
+              border-bottom: 1px dotted #9E9E9E;
+              color: #D4AF37;
+              position: relative;
+              transition: all 0.2s ease;
+            }
+
+            .term:hover {
+              color: #E8D5B7;
+            }
+
+            .popover {
+              position: absolute;
+              z-index: 1000;
+              background: rgba(26, 20, 16, 0.98);
+              border: 1px solid #D4AF37;
+              border-radius: 6px;
+              padding: 1.2rem;
+              min-width: 300px;
+              max-width: 400px;
+              box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+              backdrop-filter: blur(8px);
+            }
+
+            .popover-top {
+              bottom: 100%;
+              left: 50%;
+              transform: translateX(-50%);
+              margin-bottom: 12px;
+            }
+
+            .popover-bottom {
+              top: 100%;
+              left: 50%;
+              transform: translateX(-50%);
+              margin-top: 12px;
+            }
+
+            .popover-term {
+              font-family: 'Playfair Display', serif;
+              font-size: 1.3rem;
+              color: #D4AF37;
+              font-weight: 700;
+              margin-bottom: 0.4rem;
+            }
+
+            .popover-pronunciation {
+              font-family: 'IBM Plex Mono', monospace;
+              font-size: 0.85rem;
+              color: #9E9E9E;
+              margin-bottom: 0.4rem;
+            }
+
+            .popover-etymology {
+              font-family: 'IBM Plex Mono', monospace;
+              font-size: 0.8rem;
+              color: #9E9E9E;
+              margin-bottom: 0.8rem;
+              padding-bottom: 0.8rem;
+              border-bottom: 1px solid rgba(158, 158, 158, 0.2);
+            }
+
+            .popover-definition {
+              font-size: 0.9rem;
+              color: #D0D0D0;
+              line-height: 1.6;
+            }
+
+            .chapter-nav {
+              display: flex;
+              gap: 1rem;
+              justify-content: space-between;
+              margin-top: 3rem;
+              padding-top: 2rem;
+              border-top: 1px solid rgba(158, 158, 158, 0.1);
+            }
+
+            .nav-button {
+              background-color: rgba(212, 175, 55, 0.1);
+              color: #D4AF37;
+              border: 1px solid #D4AF37;
+              padding: 0.75rem 1.5rem;
+              border-radius: 4px;
+              cursor: pointer;
+              font-family: 'Lora', serif;
+              font-size: 1rem;
+              transition: all 0.3s ease;
+            }
+
+            .nav-button:hover {
+              background-color: rgba(212, 175, 55, 0.2);
+              transform: translateY(-2px);
+            }
+
+            @media (max-width: 768px) {
+              .header h1 {
+                font-size: 2rem;
+              }
+
+              .main-content {
+                padding: 1.5rem 1rem;
+              }
+
+              .chapter h2 {
+                font-size: 1.75rem;
+              }
+
+              .popover {
+                min-width: 250px;
+                padding: 0.8rem;
+              }
+
+              .chapter-nav {
+                flex-direction: column;
+              }
+
+              .nav-button {
+                width: 100%;
+              }
+            }
+          `}</style>
+        </div>
+      );
+    };
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(err => {
+        console.log('SW registration failed: ', err);
+      });
+    }
+  </script>
+</body>
+</html>
