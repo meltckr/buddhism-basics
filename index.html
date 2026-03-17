@@ -843,54 +843,19 @@
 
     const Term = ({ term, children }) => {
       const [isOpen, setIsOpen] = useState(false);
-      const [popoverPos, setPopoverPos] = useState("top");
-      const [popoverStyle, setPopoverStyle] = useState({});
       const termRef = useRef(null);
-      const popoverRef = useRef(null);
       const definition = definitions[term.toLowerCase()];
 
-      useEffect(() => {
-        if (isOpen && termRef.current) {
-          const rect = termRef.current.getBoundingClientRect();
-          const vw = window.innerWidth;
-
-          // Top vs bottom
-          if (rect.top < 250) {
-            setPopoverPos("bottom");
-          } else {
-            setPopoverPos("top");
-          }
-
-          // Horizontal: calculate where center would be, then clamp
-          const termCenter = rect.left + rect.width / 2;
-          const popWidth = Math.min(360, vw - 24);
-          let leftOffset = termCenter - popWidth / 2;
-          // Clamp so popover stays within 12px of each edge
-          if (leftOffset < 12) leftOffset = 12;
-          if (leftOffset + popWidth > vw - 12) leftOffset = vw - 12 - popWidth;
-          // Convert to position relative to the term element
-          const relativeLeft = leftOffset - rect.left;
-
-          setPopoverStyle({
-            left: relativeLeft + 'px',
-            transform: 'none',
-            width: popWidth + 'px',
-            minWidth: 'auto',
-            maxWidth: popWidth + 'px',
-          });
-        }
-      }, [isOpen]);
-
-      // Close when tapping outside
+      // Close when tapping outside or scrolling
       useEffect(() => {
         if (!isOpen) return;
-        const handleClick = (e) => {
-          if (termRef.current && !termRef.current.contains(e.target)) {
-            setIsOpen(false);
-          }
+        const close = () => setIsOpen(false);
+        document.addEventListener('click', close);
+        window.addEventListener('scroll', close, { passive: true });
+        return () => {
+          document.removeEventListener('click', close);
+          window.removeEventListener('scroll', close);
         };
-        document.addEventListener('click', handleClick);
-        return () => document.removeEventListener('click', handleClick);
       }, [isOpen]);
 
       if (!definition) return <span>{children || term}</span>;
@@ -903,17 +868,17 @@
           style={{ cursor: "pointer", borderBottom: "1px dotted #9E9E9E" }}
         >
           {children || term}
-          {isOpen && (
-            <div
-              ref={popoverRef}
-              className={`popover popover-${popoverPos}`}
-              style={popoverStyle}
-            >
-              <div className="popover-term">{definition.term}</div>
-              <div className="popover-pronunciation">{definition.pronunciation}</div>
-              <div className="popover-etymology">{definition.etymology}</div>
-              <div className="popover-definition">{definition.definition}</div>
-            </div>
+          {isOpen && ReactDOM.createPortal(
+            <div className="popover-overlay" onClick={() => setIsOpen(false)}>
+              <div className="popover" onClick={(e) => e.stopPropagation()}>
+                <div className="popover-close" onClick={() => setIsOpen(false)}>✕</div>
+                <div className="popover-term">{definition.term}</div>
+                <div className="popover-pronunciation">{definition.pronunciation}</div>
+                <div className="popover-etymology">{definition.etymology}</div>
+                <div className="popover-definition">{definition.definition}</div>
+              </div>
+            </div>,
+            document.body
           )}
         </span>
       );
@@ -1524,40 +1489,63 @@
               color: #E8D5B7;
             }
 
+            .popover-overlay {
+              position: fixed;
+              top: 0;
+              left: 0;
+              right: 0;
+              bottom: 0;
+              z-index: 9998;
+              background: rgba(0, 0, 0, 0.5);
+              display: flex;
+              align-items: flex-end;
+              justify-content: center;
+              padding: 1rem;
+              animation: overlayIn 0.2s ease-out;
+            }
+
+            @keyframes overlayIn {
+              from { opacity: 0; }
+              to { opacity: 1; }
+            }
+
             .popover {
-              position: absolute;
-              z-index: 1000;
+              position: relative;
+              z-index: 9999;
               background: #1a1410;
               border: 1px solid rgba(212, 175, 55, 0.5);
-              border-radius: 10px;
-              padding: 1.3rem 1.4rem;
-              min-width: 300px;
-              max-width: 380px;
-              box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(212, 175, 55, 0.1);
-              animation: popIn 0.2s ease-out;
+              border-radius: 14px;
+              padding: 1.5rem 1.5rem 1.3rem;
+              width: 100%;
+              max-width: 400px;
+              margin-bottom: env(safe-area-inset-bottom, 0px);
+              box-shadow: 0 -4px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(212, 175, 55, 0.1);
+              animation: sheetUp 0.25s ease-out;
             }
 
-            @keyframes popIn {
-              from { opacity: 0; transform: translateX(-50%) scale(0.95); }
-              to { opacity: 1; transform: translateX(-50%) scale(1); }
+            @keyframes sheetUp {
+              from { opacity: 0; transform: translateY(30px); }
+              to { opacity: 1; transform: translateY(0); }
             }
 
-            .popover-top {
-              bottom: 100%;
-              margin-bottom: 12px;
-            }
-
-            .popover-bottom {
-              top: 100%;
-              margin-top: 12px;
+            .popover-close {
+              position: absolute;
+              top: 0.8rem;
+              right: 1rem;
+              color: #8A8078;
+              font-size: 1rem;
+              cursor: pointer;
+              padding: 0.3rem;
+              line-height: 1;
             }
 
             .popover-term {
               font-family: 'Playfair Display', serif;
-              font-size: 1.25rem;
+              font-size: 1.3rem;
               color: #D4AF37;
               font-weight: 700;
               margin-bottom: 0.3rem;
+              padding-right: 2rem;
             }
 
             .popover-pronunciation {
@@ -1577,9 +1565,9 @@
             }
 
             .popover-definition {
-              font-size: 0.92rem;
+              font-size: 0.95rem;
               color: #C0B8A8;
-              line-height: 1.65;
+              line-height: 1.7;
             }
 
             /* === NAVIGATION === */
@@ -1670,7 +1658,7 @@
               }
 
               .popover {
-                padding: 1rem;
+                border-radius: 14px 14px 0 0;
               }
 
               .chapter-nav { flex-direction: column; }
