@@ -844,18 +844,53 @@
     const Term = ({ term, children }) => {
       const [isOpen, setIsOpen] = useState(false);
       const [popoverPos, setPopoverPos] = useState("top");
+      const [popoverStyle, setPopoverStyle] = useState({});
       const termRef = useRef(null);
+      const popoverRef = useRef(null);
       const definition = definitions[term.toLowerCase()];
 
       useEffect(() => {
         if (isOpen && termRef.current) {
           const rect = termRef.current.getBoundingClientRect();
+          const vw = window.innerWidth;
+
+          // Top vs bottom
           if (rect.top < 250) {
             setPopoverPos("bottom");
           } else {
             setPopoverPos("top");
           }
+
+          // Horizontal: calculate where center would be, then clamp
+          const termCenter = rect.left + rect.width / 2;
+          const popWidth = Math.min(360, vw - 24);
+          let leftOffset = termCenter - popWidth / 2;
+          // Clamp so popover stays within 12px of each edge
+          if (leftOffset < 12) leftOffset = 12;
+          if (leftOffset + popWidth > vw - 12) leftOffset = vw - 12 - popWidth;
+          // Convert to position relative to the term element
+          const relativeLeft = leftOffset - rect.left;
+
+          setPopoverStyle({
+            left: relativeLeft + 'px',
+            transform: 'none',
+            width: popWidth + 'px',
+            minWidth: 'auto',
+            maxWidth: popWidth + 'px',
+          });
         }
+      }, [isOpen]);
+
+      // Close when tapping outside
+      useEffect(() => {
+        if (!isOpen) return;
+        const handleClick = (e) => {
+          if (termRef.current && !termRef.current.contains(e.target)) {
+            setIsOpen(false);
+          }
+        };
+        document.addEventListener('click', handleClick);
+        return () => document.removeEventListener('click', handleClick);
       }, [isOpen]);
 
       if (!definition) return <span>{children || term}</span>;
@@ -864,12 +899,16 @@
         <span
           ref={termRef}
           className="term"
-          onClick={() => setIsOpen(!isOpen)}
+          onClick={(e) => { e.stopPropagation(); setIsOpen(!isOpen); }}
           style={{ cursor: "pointer", borderBottom: "1px dotted #9E9E9E" }}
         >
           {children || term}
           {isOpen && (
-            <div className={`popover popover-${popoverPos}`}>
+            <div
+              ref={popoverRef}
+              className={`popover popover-${popoverPos}`}
+              style={popoverStyle}
+            >
               <div className="popover-term">{definition.term}</div>
               <div className="popover-pronunciation">{definition.pronunciation}</div>
               <div className="popover-etymology">{definition.etymology}</div>
@@ -1505,15 +1544,11 @@
 
             .popover-top {
               bottom: 100%;
-              left: 50%;
-              transform: translateX(-50%);
               margin-bottom: 12px;
             }
 
             .popover-bottom {
               top: 100%;
-              left: 50%;
-              transform: translateX(-50%);
               margin-top: 12px;
             }
 
@@ -1635,11 +1670,7 @@
               }
 
               .popover {
-                min-width: 260px;
-                max-width: 320px;
                 padding: 1rem;
-                left: 0 !important;
-                transform: translateX(-20%) !important;
               }
 
               .chapter-nav { flex-direction: column; }
